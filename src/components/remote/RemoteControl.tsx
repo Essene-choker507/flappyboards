@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 
 interface RemoteSettings {
   flipSpeed: number;
@@ -28,6 +28,8 @@ export default function RemoteControl({
 }: RemoteControlProps) {
   const [customText, setCustomText] = useState("");
   const [localSettings, setLocalSettings] = useState(settings);
+  const [lastfmInput, setLastfmInput] = useState("");
+  const [lastfmConnected, setLastfmConnected] = useState(false);
 
   const updateSetting = useCallback(
     (key: string, value: number | boolean | string) => {
@@ -101,6 +103,128 @@ export default function RemoteControl({
         >
           SKIP TO NEXT
         </button>
+      </Section>
+
+      {/* Music — Last.fm */}
+      <Section label="MUSIC — LAST.FM">
+        <p
+          style={{
+            fontSize: 7,
+            color: "var(--text-subtle)",
+            margin: "0 0 8px",
+            fontFamily: "var(--font-geist-mono)",
+            letterSpacing: "0.1em",
+            textTransform: "uppercase",
+            opacity: 0.7,
+          }}
+        >
+          SHOW NOW PLAYING FROM ANY APP
+        </p>
+        <div style={{ display: "flex", gap: 4 }}>
+          <input
+            type="text"
+            value={lastfmInput}
+            onChange={(e) => setLastfmInput(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && lastfmInput.trim()) {
+                onSendMessage({
+                  type: "music-control",
+                  payload: {
+                    source: "lastfm",
+                    isPlaying: false,
+                    currentTrack: null,
+                    radioStation: null,
+                    lastfmUsername: lastfmInput.trim(),
+                  },
+                });
+                setLastfmConnected(true);
+              }
+            }}
+            placeholder="LAST.FM USERNAME"
+            style={{
+              flex: 1,
+              padding: "8px 10px",
+              fontSize: 8,
+              fontFamily: "var(--font-geist-mono)",
+              letterSpacing: "0.1em",
+              textTransform: "uppercase",
+              background: "var(--tag-bg)",
+              color: "var(--text)",
+              border: "1px solid var(--border)",
+              borderRadius: 2,
+              outline: "none",
+            }}
+          />
+          <button
+            onClick={() => {
+              if (lastfmInput.trim()) {
+                onSendMessage({
+                  type: "music-control",
+                  payload: {
+                    source: "lastfm",
+                    isPlaying: false,
+                    currentTrack: null,
+                    radioStation: null,
+                    lastfmUsername: lastfmInput.trim(),
+                  },
+                });
+                setLastfmConnected(true);
+              }
+            }}
+            disabled={!lastfmInput.trim()}
+            style={{
+              padding: "8px 12px",
+              fontSize: 8,
+              fontWeight: 500,
+              letterSpacing: "0.1em",
+              fontFamily: "var(--font-geist-mono)",
+              background: lastfmInput.trim() ? "var(--fg)" : "var(--tag-bg)",
+              color: lastfmInput.trim() ? "var(--bg)" : "var(--text-subtle)",
+              border: "1px solid var(--border)",
+              borderRadius: 2,
+              cursor: lastfmInput.trim() ? "pointer" : "default",
+              transition: "all 200ms ease",
+            }}
+          >
+            {lastfmConnected ? "UPDATE" : "CONNECT"}
+          </button>
+        </div>
+        {lastfmConnected && (
+          <button
+            onClick={() => {
+              onSendMessage({
+                type: "music-control",
+                payload: {
+                  source: "off",
+                  isPlaying: false,
+                  currentTrack: null,
+                  radioStation: null,
+                  lastfmUsername: null,
+                },
+              });
+              setLastfmConnected(false);
+              setLastfmInput("");
+            }}
+            style={{
+              width: "100%",
+              marginTop: 6,
+              padding: "6px 0",
+              fontSize: 7,
+              fontWeight: 500,
+              letterSpacing: "0.1em",
+              textTransform: "uppercase",
+              fontFamily: "var(--font-geist-mono)",
+              background: "none",
+              color: "#e55",
+              border: "1px solid rgba(238, 85, 85, 0.3)",
+              borderRadius: 2,
+              cursor: "pointer",
+              transition: "all 200ms ease",
+            }}
+          >
+            DISCONNECT LAST.FM
+          </button>
+        )}
       </Section>
 
       {/* Theme */}

@@ -16,6 +16,9 @@ import { useTheme } from "@/components/ThemeProvider";
 import { useRoomStore } from "@/stores/room-store";
 import { usePartyConnection } from "@/hooks/usePartyConnection";
 import RoomCode from "@/components/room/RoomCode";
+import { useMusicStore } from "@/stores/music-store";
+import { useLastFmPlayer } from "@/hooks/useLastFmPlayer";
+import { formatNowPlaying } from "@/lib/content/now-playing";
 
 function TVDisplay() {
   const searchParams = useSearchParams();
@@ -34,6 +37,17 @@ function TVDisplay() {
   const rotatorRef = useRef(new ContentRotator(QUOTES));
   const wakeLockRef = useRef<WakeLockSentinel | null>(null);
   const rotationTimerRef = useRef<ReturnType<typeof setInterval>>(undefined);
+  const rotationCountRef = useRef(0);
+
+  // Music state
+  const musicSource = useMusicStore((s) => s.source);
+  const musicIsPlaying = useMusicStore((s) => s.isPlaying);
+  const currentTrack = useMusicStore((s) => s.currentTrack);
+  const setMusicSource = useMusicStore((s) => s.setSource);
+  const setLastfmUsername = useMusicStore((s) => s.setLastfmUsername);
+
+  // Activate Last.fm polling when source is lastfm
+  useLastFmPlayer();
 
   // Generate room code on mount
   const roomCode = useRoomStore((s) => s.roomCode);
@@ -97,9 +111,21 @@ function TVDisplay() {
   );
 
   const cycleNext = useCallback(async () => {
+    rotationCountRef.current++;
+    // Every 3rd rotation, show "Now Playing" if music is active
+    if (
+      musicIsPlaying &&
+      musicSource !== "off" &&
+      currentTrack &&
+      rotationCountRef.current % 3 === 0
+    ) {
+      const npLines = formatNowPlaying(currentTrack.title, currentTrack.artist);
+      await showMessage(npLines);
+      return;
+    }
     const content = rotatorRef.current.next();
     await showMessage(content.lines);
-  }, [showMessage]);
+  }, [showMessage, musicIsPlaying, musicSource, currentTrack]);
 
   // Reset rotation timer
   const resetRotation = useCallback(() => {
@@ -123,6 +149,14 @@ function TVDisplay() {
     onSkip: () => {
       cycleNext();
       resetRotation();
+    },
+    onMusicUpdate: (state) => {
+      const ms = state as {
+        source: "off" | "radio" | "spotify" | "lastfm";
+        lastfmUsername?: string | null;
+      };
+      if (ms.source) setMusicSource(ms.source);
+      if (ms.lastfmUsername !== undefined) setLastfmUsername(ms.lastfmUsername);
     },
   });
 

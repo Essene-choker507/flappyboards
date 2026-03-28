@@ -16,18 +16,22 @@ export interface RadioStation {
   favicon: string;
 }
 
+export type MusicSource = "spotify" | "radio" | "lastfm" | "off";
+
 interface MusicStore {
-  source: "spotify" | "radio" | "off";
+  source: MusicSource;
   isPlaying: boolean;
   currentTrack: TrackInfo | null;
   radioStation: RadioStation | null;
   musicVolume: number;
+  lastfmUsername: string | null;
 
-  setSource: (s: "spotify" | "radio" | "off") => void;
+  setSource: (s: MusicSource) => void;
   setPlaying: (v: boolean) => void;
   setCurrentTrack: (t: TrackInfo | null) => void;
   setRadioStation: (s: RadioStation | null) => void;
   setMusicVolume: (v: number) => void;
+  setLastfmUsername: (u: string | null) => void;
 }
 
 export const useMusicStore = create<MusicStore>()(
@@ -38,6 +42,7 @@ export const useMusicStore = create<MusicStore>()(
       currentTrack: null,
       radioStation: null,
       musicVolume: 0.5,
+      lastfmUsername: null,
 
       setSource: (source) => set({ source, isPlaying: false, currentTrack: null }),
       setPlaying: (isPlaying) => set({ isPlaying }),
@@ -50,6 +55,7 @@ export const useMusicStore = create<MusicStore>()(
             : null,
         }),
       setMusicVolume: (musicVolume) => set({ musicVolume }),
+      setLastfmUsername: (lastfmUsername) => set({ lastfmUsername }),
     }),
     {
       name: "flappyboards-music",
@@ -57,6 +63,7 @@ export const useMusicStore = create<MusicStore>()(
         source: state.source,
         radioStation: state.radioStation,
         musicVolume: state.musicVolume,
+        lastfmUsername: state.lastfmUsername,
       }),
     }
   )

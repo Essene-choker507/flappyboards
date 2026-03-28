@@ -10,10 +10,11 @@ interface RoomSettings {
 }
 
 interface MusicState {
-  source: "off" | "radio" | "spotify";
+  source: "off" | "radio" | "spotify" | "lastfm";
   isPlaying: boolean;
   currentTrack: { title: string; artist: string } | null;
   radioStation: { name: string; url: string } | null;
+  lastfmUsername: string | null;
 }
 
 interface RoomState {
@@ -62,6 +63,7 @@ export default class FlappyBoardsRoom implements Party.Server {
         isPlaying: false,
         currentTrack: null,
         radioStation: null,
+        lastfmUsername: null,
       },
       hostConnected: false,
       connectedClients: 0,

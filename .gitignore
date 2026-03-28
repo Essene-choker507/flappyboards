@@ -40,6 +40,9 @@ next-env.d.ts
 .claude/
 .mcp.json
 
+# test coverage
+/coverage
+
 # skills cache
 .agents/
 skills-lock.json

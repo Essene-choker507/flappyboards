@@ -16,6 +16,7 @@ import ThemeToggle from "@/components/ThemeToggle";
 import MusicPlayer from "@/components/music/MusicPlayer";
 import { useMusicStore } from "@/stores/music-store";
 import { formatNowPlaying } from "@/lib/content/now-playing";
+import { useLastFmPlayer } from "@/hooks/useLastFmPlayer";
 
 export default function DisplayPage() {
   const boardRef = useRef<SplitFlapBoardRef>(null);
@@ -28,6 +29,9 @@ export default function DisplayPage() {
   const musicSource = useMusicStore((s) => s.source);
   const musicIsPlaying = useMusicStore((s) => s.isPlaying);
   const currentTrack = useMusicStore((s) => s.currentTrack);
+
+  // Activate Last.fm polling when source is lastfm
+  useLastFmPlayer();
 
   // Read settings from store
   const flipSpeed = useSettingsStore((s) => s.flipSpeed);
